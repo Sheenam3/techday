@@ -7,7 +7,10 @@ import (
         "strings"
         "github.com/docker/docker/api/types"
         "github.com/docker/docker/client"
-        pp "github/Sheenam3/techday/parse/probeparser"
+
+        pp "github.com/Sheenam3/x-tracer-gocui/parse/probeparser"
+        "time"
+
 )
 
 func main() {
@@ -75,12 +78,12 @@ func main() {
 
         case "tcptracer":
                 logtcptracer := make(chan pp.Log, 1)
-                        go pp.RunTcptracer(pn[probe], logtcptracer, topResult[0][0])
+                        go pp.RunTcptracer(pn[probe], logtcptracer,topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcptracer {
-
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s |IP->%s | SADDR:%s | DADDR:%s | SPORT:%s | DPORT:%s \n",pn[probe],val.fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8],val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s |T: %s | PID:%s | PNAME:%s |IP->%s | SADDR:%s | DADDR:%s | SPORT:%s | DPORT:%s \n",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8],parse[9])
 
 
                                 }
@@ -89,11 +92,12 @@ func main() {
 
         case "tcpconnect":
                 logtcpconnect := make(chan pp.Log, 1)
-                        go pp.RunTcpconnect(pn[probe], logtcpconnect, topResult[0][0])
+                        go pp.RunTcpconnect(pn[probe], logtcpconnect, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcpconnect {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | SADDR:%s | DADDR:%s | DPORT:%s \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | SADDR:%s | DADDR:%s | DPORT:%s \n",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8])
                                 }
 
                         }()
@@ -101,12 +105,12 @@ func main() {
 
         case "tcpaccept":
                 logtcpaccept := make(chan pp.Log, 1)
-                        go pp.RunTcpaccept(pn[probe], logtcpaccept, topResult[0][0])
+                        go pp.RunTcpaccept(pn[probe], logtcpaccept, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcpaccept {
-
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | RADDR:%s | RPORT:%s | LADDR:%s | LPORT:%s \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8],val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | RADDR:%s | RPORT:%s | LADDR:%s | LPORT:%s \n",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8],parse[9])
 
 
                                 }
@@ -115,34 +119,36 @@ func main() {
 
         case "tcplife":
                 logtcplife := make(chan pp.Log, 1)
-                        go pp.RunTcplife(pn[probe], logtcplife, topResult[0][0])
+                        go pp.RunTcplife(pn[probe], logtcplife, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcplife {
-
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |PID:%s | PNAME:%s | LADDRR:%s | LPORT:%s | RADDR:%s | RPORT:%s | TX_KB:%s | RX_KB:%s | MS: %s \n",pn[probe],val.Fulllog[0],val.Fulllog[2],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8],val.Fulllog[9],val.Fulllog[10])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s |PID:%s | PNAME:%s | LADDRR:%s | LPORT:%s | RADDR:%s | RPORT:%s | TX_KB:%s | RX_KB:%s | MS: %s \n",parse[0],parse[2],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8],parse[9],parse[10])
 
                                 }
 
                         }()
         case "execsnoop":
                 logexecsnoop := make(chan pp.Log, 1)
-                        go pp.RunExecsnoop(pn[probe], logexecsnoop, topResult[0][0])
+                        go pp.RunExecsnoop(pn[probe], logexecsnoop, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logexecsnoop {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s | T:%s | PNAME: %s | PID:%s | PPID:%s | RET:%s | ARGS:%s \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s | T:%s | PNAME: %s | PID:%s | PPID:%s | RET:%s | ARGS:%s \n",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7])
 
                                 }
 
                         }()
         case "biosnoop":
                 logbiosnoop := make(chan pp.Log, 1)
-                        go pp.RunBiosnoop(pn[probe], logbiosnoop, topResult[0][0])
+                        go pp.RunBiosnoop(pn[probe], logbiosnoop, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logbiosnoop {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s |PNAME: %s | PID:%s | DISK:%s | R/W:%s | SECTOR:%s |BYTES: %s | Lat(ms): %s | \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[2],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s |T: %s |PNAME: %s | PID:%s | DISK:%s | R/W:%s | SECTOR:%s |BYTES: %s | Lat(ms): %s | \n",parse[0],parse[1],parse[2],parse[3],parse[4],parse[5],parse[6],parse[7],parse[9])
 
 
                                 }
@@ -150,11 +156,12 @@ func main() {
                         }()
         case "cachestat":
                 logcachetop := make(chan pp.Log, 1)
-                        go pp.RunCachetop(pn[probe], logcachetop, topResult[0][0])
+                        go pp.RunCachetop(pn[probe], logcachetop, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logcachetop {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s | PID:%s | UID:%s | CMD:%s | HITS:%s | MISS:%s | DIRTIES: %s| READ_HIT%:%s | W_HIT%: %s | \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[2],val.Fulllog[3],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8], val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Sys_Time: %s | PID:%s | UID:%s | CMD:%s | HITS:%s | MISS:%s | DIRTIES: %s| READ_HIT%:%s | W_HIT%: %s | \n",parse[0],parse[1],parse[2],parse[3],parse[5],parse[6],parse[7],parse[8], parse[9])
 
                                 }
 
@@ -166,12 +173,13 @@ func main() {
         case "All Probes":
 
                 logtcptracer := make(chan pp.Log, 1)
-                        go pp.RunTcptracer(pn[probe], logtcptracer, topResult[0][0])
+                        go pp.RunTcptracer(pn[probe], logtcptracer, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcptracer {
+                                        parse := strings.Fields(string(val.Fulllog))
 
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s |IP->%s | SADDR:%s | DADDR:%s | SPORT:%s | DPORT:%s \n",pn[probe],val.fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8],val.Fulllog[9])
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s |IP->%s | SADDR:%s | DADDR:%s | SPORT:%s | DPORT:%s \n","tcptracer",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8],parse[9])
 
 
                                 }
@@ -180,11 +188,12 @@ func main() {
 
 
                 logtcpconnect := make(chan pp.Log, 1)
-                        go pp.RunTcpconnect(pn[probe], logtcpconnect, topResult[0][0])
+                        go pp.RunTcpconnect(pn[probe], logtcpconnect, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcpconnect {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | SADDR:%s | DADDR:%s | DPORT:%s \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | SADDR:%s | DADDR:%s | DPORT:%s \n","tcpconnect",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8])
                                 }
 
                         }()
@@ -192,12 +201,12 @@ func main() {
 
 
                 logtcpaccept := make(chan pp.Log, 1)
-                        go pp.RunTcpaccept(pn[probe], logtcpaccept, topResult[0][0])
+                        go pp.RunTcpaccept(pn[probe], logtcpaccept, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcpaccept {
-
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | RADDR:%s | RPORT:%s | LADDR:%s | LPORT:%s \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8],val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s | PID:%s | PNAME:%s | IP:%s | RADDR:%s | RPORT:%s | LADDR:%s | LPORT:%s \n","tcpaccept",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8],parse[9])
 
 
                                 }
@@ -206,34 +215,37 @@ func main() {
 
 
                 logtcplife := make(chan pp.Log, 1)
-                        go pp.RunTcplife(pn[probe], logtcplife, topResult[0][0])
+                        go pp.RunTcplife(pn[probe], logtcplife, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logtcplife {
+                                        parse := strings.Fields(string(val.Fulllog))
 
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |PID:%s | PNAME:%s | LADDRR:%s | LPORT:%s | RADDR:%s | RPORT:%s | TX_KB:%s | RX_KB:%s | MS: %s \n",pn[probe],val.Fulllog[0],val.Fulllog[2],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8],val.Fulllog[9],val.Fulllog[10])
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s |PID:%s | PNAME:%s | LADDRR:%s | LPORT:%s | RADDR:%s | RPORT:%s | TX_KB:%s | RX_KB:%s | MS: %s \n","tcplife",parse[0],parse[2],parse[3],parse[4],parse[5],parse[6],parse[7],parse[8],parse[9],parse[10])
 
                                 }
 
                         }()
 
                 logexecsnoop := make(chan pp.Log, 1)
-                        go pp.RunExecsnoop(pn[probe], logexecsnoop, topResult[0][0])
+                        go pp.RunExecsnoop(pn[probe], logexecsnoop, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logexecsnoop {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s | T:%s | PNAME: %s | PID:%s | PPID:%s | RET:%s | ARGS:%s \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s | T:%s | PNAME: %s | PID:%s | PPID:%s | RET:%s | ARGS:%s \n","execsnoop",parse[0],parse[1],parse[3],parse[4],parse[5],parse[6],parse[7])
 
                                 }
 
                         }()
 
                 logbiosnoop := make(chan pp.Log, 1)
-                        go pp.RunBiosnoop(pn[probe], logbiosnoop, topResult[0][0])
+                        go pp.RunBiosnoop(pn[probe], logbiosnoop, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logbiosnoop {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s |PNAME: %s | PID:%s | DISK:%s | R/W:%s | SECTOR:%s |BYTES: %s | Lat(ms): %s | \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[2],val.Fulllog[3],val.Fulllog[4],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s |T: %s |PNAME: %s | PID:%s | DISK:%s | R/W:%s | SECTOR:%s |BYTES: %s | Lat(ms): %s | \n","biosnoop",parse[0],parse[1],parse[2],parse[3],parse[4],parse[5],parse[6],parse[7],parse[9])
 
 
                                 }
@@ -241,11 +253,12 @@ func main() {
                         }()
 
                 logcachetop := make(chan pp.Log, 1)
-                        go pp.RunCachetop(pn[probe], logcachetop, topResult[0][0])
+                        go pp.RunCachetop(pn[probe], logcachetop, topResult.Processes[0][0])
                         go func() {
 
                                 for val := range logcachetop {
-                                        fmt.Printf("{Probe:%s |Sys_Time: %s | PID:%s | UID:%s | CMD:%s | HITS:%s | MISS:%s | DIRTIES: %s| READ_HIT%:%s | W_HIT%: %s | \n",pn[probe],val.Fulllog[0],val.Fulllog[1],val.Fulllog[2],val.Fulllog[3],val.Fulllog[5],val.Fulllog[6],val.Fulllog[7],val.Fulllog[8], val.Fulllog[9])
+                                        parse := strings.Fields(string(val.Fulllog))
+                                        fmt.Printf("{Probe:%s |Sys_Time: %s | PID:%s | UID:%s | CMD:%s | HITS:%s | MISS:%s | DIRTIES: %s| READ_HIT%:%s | W_HIT%: %s | \n","cachestat",parse[0],parse[1],parse[2],parse[3],parse[5],parse[6],parse[7],parse[8], parse[9])
 
                                 }
 
@@ -268,4 +281,3 @@ for {
 
 
 }
-
