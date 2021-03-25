@@ -7,7 +7,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	//pp "/root/techday/parse/probeparser"
-	pp "github.com/Sheenam3/techday/probeparser"
+	pp "github.com/Sheenam3/techday/parse"
 )
 
 func main() {
